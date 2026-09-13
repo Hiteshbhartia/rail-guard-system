@@ -91,6 +91,7 @@ module tb_railway_crossing_controller;
     endfunction
 
     function [95:0] barrier_text;
+        input dummy;
         begin
             if (barrier_moving && barrier_down)    barrier_text = "MOVING DOWN";
             else if (barrier_moving && barrier_up) barrier_text = "MOVING UP  ";
@@ -109,7 +110,7 @@ module tb_railway_crossing_controller;
             $display("| FSM STATE:          %0s", state_name(state_out));
             $display("| TIMER:              %02d", timer_out);
             $display("| RAIL SIGNAL:        %0s", rail_signal_red ? "RED" : "GREEN");
-            $display("| BARRIER:            %0s", barrier_text());
+            $display("| BARRIER:            %0s", barrier_text(1'b0));
             $display("| WARNING:            %0s", warning_light ? "ON" : "OFF");
             $display("| BUZZER:             %0s", buzzer ? "ON" : "OFF");
             $display("| OBSTACLE:           %0s", obstacle_detected ? "DETECTED" : "CLEAR");
