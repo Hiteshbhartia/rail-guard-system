@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Smart Railway Level-Crossing Controller &mdash; FSM Simulator</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+<header class="topbar">
+  <div>
+    <h1>SMART RAILWAY LEVEL-CROSSING CONTROLLER</h1>
+    <p class="sub">Obstacle Detection &amp; Emergency Override &middot; Moore FSM mirror of
+      <code>rtl/railway_crossing_controller.v</code></p>
+  </div>
+  <div class="clockbox">
+    <span class="label">CLK</span>
+    <span id="cycle" class="value">0</span>
+    <button id="btn-run" class="btn btn-run">RUN CLOCK</button>
+  </div>
+</header>
+
+<main>
+  <!-- ------------------------------------------------ visualization ---- -->
+  <section class="panel scene-panel">
+    <h2>CROSSING VIEW</h2>
+    <div class="scene">
+      <div class="signal-post">
+        <div id="lamp-red" class="lamp red"></div>
+        <div id="lamp-green" class="lamp green"></div>
+        <div class="post"></div>
+      </div>
+
+      <div class="warnlights">
+        <div id="warn-a" class="warn"></div>
+        <div id="warn-b" class="warn"></div>
+      </div>
+
+      <div class="road"></div>
+
+      <div class="barrier-base left">
+        <div id="barrier-left" class="barrier"></div>
+      </div>
+      <div class="barrier-base right">
+        <div id="barrier-right" class="barrier"></div>
+      </div>
+
+      <div class="track">
+        <div class="rail"></div>
+        <div class="rail"></div>
+        <div class="sleepers"></div>
+      </div>
+
+      <div id="train" class="train">
+        <div class="loco"></div><div class="car"></div><div class="car"></div>
+      </div>
+
+      <div id="obstacle" class="obstacle">&#9888;</div>
+      <div id="emergency-flash" class="emergency-flash"></div>
+    </div>
+
+    <div class="scene-legend">
+      <span>TRAIN DIRECTION: <b id="dir-text">NONE</b></span>
+      <span>BARRIER: <b id="barrier-text">UP</b></span>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------ status ----------- -->
+  <section class="panel">
+    <h2>CONTROLLER STATUS</h2>
+    <div class="state-big" id="state-name">S_IDLE</div>
+    <div class="timer-row">
+      <span class="label">TIMER</span>
+      <span class="value mono" id="timer">00</span>
+      <div class="timer-bar"><div id="timer-fill"></div></div>
+    </div>
+    <ul class="leds">
+      <li><i id="o-red"></i>RAIL SIGNAL RED</li>
+      <li><i id="o-warn"></i>WARNING LIGHT</li>
+      <li><i id="o-buzz"></i>BUZZER</li>
+      <li><i id="o-up"></i>BARRIER_UP</li>
+      <li><i id="o-down"></i>BARRIER_DOWN</li>
+      <li><i id="o-moving"></i>BARRIER_MOVING</li>
+      <li><i id="o-emg"></i>EMERGENCY IND.</li>
+      <li><i id="o-obs"></i>OBSTACLE</li>
+    </ul>
+    <div class="fsm-map" id="fsm-map"></div>
+  </section>
+
+  <!-- ------------------------------------------------ controls --------- -->
+  <section class="panel">
+    <h2>INPUT CONTROLS</h2>
+    <div class="controls">
+      <button class="btn btn-danger" data-action="reset">RESET</button>
+      <button class="btn" data-toggle="train_approach">TRAIN APPROACH</button>
+      <button class="btn" data-toggle="train_from_left">TRAIN FROM LEFT</button>
+      <button class="btn" data-toggle="train_from_right">TRAIN FROM RIGHT</button>
+      <button class="btn" data-toggle="train_departed">TRAIN DEPARTED</button>
+      <button class="btn btn-warn" data-set="obstacle_detected" data-value="1">OBSTACLE DETECTED</button>
+      <button class="btn" data-set="obstacle_detected" data-value="0">CLEAR OBSTACLE</button>
+      <button class="btn btn-danger" data-set="emergency_override" data-value="1">EMERGENCY</button>
+      <button class="btn" data-set="emergency_override" data-value="0">CLEAR EMERGENCY</button>
+      <button class="btn" data-pulse="manual_reset">MANUAL RESET (ACK)</button>
+    </div>
+    <p class="hint">Level inputs stay asserted until toggled off, exactly like the
+      RTL ports. MANUAL RESET is a one-cycle pulse used to leave S_EMERGENCY.</p>
+  </section>
+
+  <!-- ------------------------------------------------ log -------------- -->
+  <section class="panel log-panel">
+    <h2>EVENT LOG</h2>
+    <pre id="log" class="log"></pre>
+  </section>
+</main>
+
+<footer>
+  Authoritative design: Verilog RTL + Icarus Verilog testbench (VCD in
+  <code>sim/railway_crossing.vcd</code>). This browser view is a cycle-accurate
+  software mirror of the same FSM &mdash; no hardware is synthesized here.
+</footer>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
